@@ -4,8 +4,8 @@
 <main>
 
         <div ngClass="board" >
-            @for (item of board; track $index) {
-                <div ngClass="cell" >{{item}}</div>
+            @for (item of board(); track $index) {
+                <div class="cell" >{{item}}</div>
             }
         </div>
 </main>
