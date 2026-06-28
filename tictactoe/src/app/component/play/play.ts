@@ -11,9 +11,12 @@ export class Play {
 
 
   // Creating signals, for board, player,  computer
-  board = signal<string[]>(Array(9).fill(''))
+  size = signal(4)
+  board = signal<string[]>(this.emptyBoard())
   isComputerThinking = signal<boolean>(false)
   gameStarted = signal<boolean>(false)
+
+
 
   //Symbol, computer symbol depends on the human one
   humanSymbol = signal<'X' | 'O' | null>(null)
@@ -43,19 +46,15 @@ export class Play {
 
   winner = computed<string | null>(() => {
 
-    //reading the board
+    //reading the board & getting the winning lines
     const board = this.board()
-
-    const win = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],
-      [0, 3, 6], [1, 4, 7], [2, 5, 8],
-      [0, 4, 8], [2, 4, 6],
-    ]
+    const lines = this.getWinningLines(this.size())
 
     //Finding the winning line, and return it 
-    const winningLine = win.find(([a, b, c]) =>
-      board[a] !== '' && board[a] === board[b] && board[a] === board[c]
-    );
+    const winningLine = lines.find(line => {
+      const first = board[line[0]];        // get the symbol
+      return first !== '' && line.every(i => board[i] === first); //check if each lines, contain the same symbol
+    });
     //Give us who win the game
     return winningLine ? board[winningLine[0]] : null;
   });
@@ -104,15 +103,59 @@ export class Play {
 
   //Replay the game
   reset() {
-    this.board.set(Array(9).fill(''));
+    this.board.set(this.emptyBoard());
     this.gameStarted.set(false)
     this.isComputerThinking.set(false)
     this.humanSymbol.set(null)
 
-}
+  }
 
-  //Helpers
+  //Calculating winning lines
+  getWinningLines(size: number): number[][] {
+    const lines: number[][] = [];
 
+    //rows
+    for (let r = 0; r < size; r++) {
+      const row: number[] = [];
+      for (let c = 0; c < size; c++) {
+        row.push(r * size + c);
+      }
+      lines.push(row);
+    }
+
+    //columns
+    for (let c = 0; c < size; c++) {
+      const row: number[] = [];
+      for (let r = 0; r < size; r++) {
+        row.push(r * size + c);
+      }
+      lines.push(row);
+    }
+
+
+
+    // main diagonal
+    const mainDiagonal: number[] = [];
+    for (let r = 0; r < size; r++) {
+      mainDiagonal.push(r * size + r);
+    }
+    lines.push(mainDiagonal);
+
+    //anti diagonal
+    const antiDiagonal: number[] = [];
+    for (let r = 0; r < size; r++) {
+      antiDiagonal.push(r * size + (size - 1 - r));
+    }
+    lines.push(antiDiagonal);
+
+    return lines;
+  }
+
+
+
+  // HELPERS
+
+  //Computer play
   private triggerComputer() {
     if (this.winner() !== null) return;
     this.isComputerThinking.set(true);
@@ -122,6 +165,8 @@ export class Play {
     }, 500);
   }
 
+  //init the borad
+  private emptyBoard() { return Array(this.size() * this.size()).fill(''); }
 
 
 }
