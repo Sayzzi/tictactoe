@@ -24,7 +24,7 @@ export class Game {
     return Array(this._size() * this._size()).fill('');
   }
 
-  // computed it's already readonly, exposed directly
+  //Computed, derived state & readonly
   //computer symbol
   readonly computerSymbol = computed<'X' | 'O' | null>(() => {
     const human = this._humanSymbol();
