@@ -3,6 +3,11 @@
 
 <main>
 
+
+
+
+
+    @if (gameStarted()) {
     <div ngClass="board">
         @for (item of board(); track $index) {
         <div class="cell" [ngClass]="{ 'cross': item === 'X', 'circle': item === 'O' }" (click)="play($index)">
@@ -13,4 +18,11 @@
     @if (winner()) {
     <p>{{ winner() }} won</p>
     }
+
+    } @else {
+    <button (click)="chooseSymbol('X')">Play ❌</button>
+    <button (click)="chooseSymbol('O')">Play ⭕</button>
+    }
+
+
 </main>

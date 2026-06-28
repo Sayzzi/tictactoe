@@ -9,13 +9,29 @@ import { NgClass } from '@angular/common';
 })
 export class Play {
 
-
-
   // Creating signals, for board, player & computer 
   board = signal<string[]>(Array(9).fill(''))
-  currentPlayer = signal<'X' | 'O'>('X')
-  isComputerThinking= signal<boolean>(false)
+  // currentPlayer = signal<'X' | 'O'>('X')
+  isComputerThinking = signal<boolean>(false)
+  gameStarted = signal<boolean>(false)
 
+  //Symbol, computer symbol depends on the human one
+  humanSymbol = signal<'X' | 'O' | null>(null)
+
+  computerSymbol = computed<'X' | 'O' | null>(() => {
+    const human = this.humanSymbol();
+    if (human === null) return null;
+    return human === 'X' ? 'O' : 'X';
+  });
+
+  chooseSymbol(symbol: 'X' | 'O') {
+    this.humanSymbol.set(symbol)
+    this.gameStarted.set(true)
+
+    //X always start in tic tac toe
+    if (this.computerSymbol() === 'X') this.triggerComputer();
+
+  }
 
   winner = computed<string | null>(() => {
 
@@ -47,21 +63,11 @@ export class Play {
     this.board.update(cells => {
       //create new array, so the signal detect it
       const copy = [...cells]
-      copy[index] = this.currentPlayer()
+      copy[index] = this.humanSymbol()!
       return copy
     })
-    //Change the player
-    this.currentPlayer.set(this.currentPlayer() === 'X' ? 'O' : 'X')
-
     //Computer play, with timeout (fake thinking)
-    if(this.winner()===null){
-
-      this.isComputerThinking.set(true);
-      setTimeout(() => {
-        this.computerPlay()
-        this.isComputerThinking.set(false)
-      }, 500);
-    }
+    this.triggerComputer();
 
 
   }
@@ -72,11 +78,9 @@ export class Play {
       .map((value, index) => value === '' ? index : -1)
       .filter(index => index !== -1)
   )
-  
 
   //The computer play
-
-  computerPlay(){
+  computerPlay() {
     const cells = this.emptyCells();
     if (cells.length === 0) return;
     const random = Math.floor(Math.random() * cells.length)
@@ -84,18 +88,23 @@ export class Play {
     this.board.update(currentBoard => {
       //create new array, so the signal detect it
       const copy = [...currentBoard]
-      copy[chosenCell] = this.currentPlayer()
+      copy[chosenCell] = this.computerSymbol()!
       return copy
     })
 
-     //Change the player (Actuel 2 player, instead of vs computer )
-    if(this.winner() ===null){
-    this.currentPlayer.set(this.currentPlayer() === 'X' ? 'O' : 'X')
-
-    }
-
   }
-  
+
+  //Helpers
+
+  private triggerComputer() {
+    if (this.winner() !== null) return;
+    this.isComputerThinking.set(true);
+    setTimeout(() => {
+      this.computerPlay();
+      this.isComputerThinking.set(false);
+    }, 500);
+  }
+
 
 
 }
