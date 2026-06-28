@@ -3,9 +3,10 @@
 
 <main>
 
-        <div ngClass="board" >
-            @for (item of board(); track $index) {
-                <div class="cell" >{{item}}</div>
-            }
+    <div ngClass="board">
+        @for (item of board(); track $index) {
+        <div class="cell" [ngClass]="{ 'cross': item === 'X', 'circle': item === 'O' }" (click)="play($index)">
         </div>
+        }
+    </div>
 </main>

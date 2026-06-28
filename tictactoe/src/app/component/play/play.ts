@@ -1,12 +1,14 @@
 import { Component, computed, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-play',
-  imports: [],
+  imports: [NgClass],
   templateUrl: './play.html',
   styleUrl: './play.css',
 })
 export class Play {
+
 
 
   // Creating signals, for board, player 
@@ -26,12 +28,32 @@ export class Play {
     ]
 
     //Finding the winning line, and return it 
-    const winningLine = win.find(([a, b, c])=>
-    board[a] !== '' && board[a] === board[b] && board[a] === board[c]
+    const winningLine = win.find(([a, b, c]) =>
+      board[a] !== '' && board[a] === board[b] && board[a] === board[c]
     );
     //Give us who win the game
     return winningLine ? board[winningLine[0]] : null;
   });
+
+
+  play(index: number) {
+    //Check if win or not empty cell
+    if(this.board()[index] !== '' || this.winner() !== null){
+      return
+    }
+    
+    //Update the cell of the board
+    this.board.update(cells =>{
+      //create new array, so the signal detect it
+      const copy = [... cells]
+      copy[index] = this.currentPlayer();
+      return copy
+    })
+    //Change the player (Actuel 2 player, instead of vs computer )
+    this.currentPlayer.set(this.currentPlayer() === 'X' ? 'O' : 'X');
+
+    
+  }
 
 }
 
