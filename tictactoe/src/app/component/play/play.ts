@@ -11,9 +11,10 @@ export class Play {
 
 
 
-  // Creating signals, for board, player 
+  // Creating signals, for board, player & computer 
   board = signal<string[]>(Array(9).fill(''))
   currentPlayer = signal<'X' | 'O'>('X')
+  isComputerThinking= signal<boolean>(false)
 
 
   winner = computed<string | null>(() => {
@@ -38,22 +39,64 @@ export class Play {
 
   play(index: number) {
     //Check if win or not empty cell
-    if(this.board()[index] !== '' || this.winner() !== null){
+    if (this.board()[index] !== '' || this.winner() !== null || this.isComputerThinking()) {
       return
     }
-    
+
     //Update the cell of the board
-    this.board.update(cells =>{
+    this.board.update(cells => {
       //create new array, so the signal detect it
-      const copy = [... cells]
-      copy[index] = this.currentPlayer();
+      const copy = [...cells]
+      copy[index] = this.currentPlayer()
       return copy
     })
-    //Change the player (Actuel 2 player, instead of vs computer )
-    this.currentPlayer.set(this.currentPlayer() === 'X' ? 'O' : 'X');
+    //Change the player
+    this.currentPlayer.set(this.currentPlayer() === 'X' ? 'O' : 'X')
 
-    
+    //Computer play, with timeout (fake thinking)
+    if(this.winner()===null){
+
+      this.isComputerThinking.set(true);
+      setTimeout(() => {
+        this.computerPlay()
+        this.isComputerThinking.set(false)
+      }, 500);
+    }
+
+
   }
+
+  //Get only empty cells for the computer
+  emptyCells = computed(() =>
+    this.board()
+      .map((value, index) => value === '' ? index : -1)
+      .filter(index => index !== -1)
+  )
+  
+
+  //The computer play
+
+  computerPlay(){
+    const cells = this.emptyCells();
+    if (cells.length === 0) return;
+    const random = Math.floor(Math.random() * cells.length)
+    const chosenCell = cells[random]
+    this.board.update(currentBoard => {
+      //create new array, so the signal detect it
+      const copy = [...currentBoard]
+      copy[chosenCell] = this.currentPlayer()
+      return copy
+    })
+
+     //Change the player (Actuel 2 player, instead of vs computer )
+    if(this.winner() ===null){
+    this.currentPlayer.set(this.currentPlayer() === 'X' ? 'O' : 'X')
+
+    }
+
+  }
+  
+
 
 }
 
