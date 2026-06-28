@@ -9,9 +9,9 @@ import { NgClass } from '@angular/common';
 })
 export class Play {
 
-  // Creating signals, for board, player & computer 
+
+  // Creating signals, for board, player,  computer
   board = signal<string[]>(Array(9).fill(''))
-  // currentPlayer = signal<'X' | 'O'>('X')
   isComputerThinking = signal<boolean>(false)
   gameStarted = signal<boolean>(false)
 
@@ -32,6 +32,14 @@ export class Play {
     if (this.computerSymbol() === 'X') this.triggerComputer();
 
   }
+
+
+  //Game draw
+  isDraw = computed<boolean>(() => {
+    return this.emptyCells().length === 0 && this.winner() === null;
+  });
+
+
 
   winner = computed<string | null>(() => {
 
@@ -93,6 +101,15 @@ export class Play {
     })
 
   }
+
+  //Replay the game
+  reset() {
+    this.board.set(Array(9).fill(''));
+    this.gameStarted.set(false)
+    this.isComputerThinking.set(false)
+    this.humanSymbol.set(null)
+
+}
 
   //Helpers
 

@@ -14,10 +14,17 @@
         </div>
         }
     </div>
-
     @if (winner()) {
     <p>{{ winner() }} won</p>
+    } @else if (isDraw()) {
+    <p>Game is draw</p>
     }
+
+    @if (winner() || isDraw()) {
+    <button (click)="reset()">Play again</button>
+    }
+
+
 
     } @else {
     <button (click)="chooseSymbol('X')">Play ❌</button>
