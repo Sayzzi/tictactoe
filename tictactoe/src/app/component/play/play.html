@@ -1,0 +1,11 @@
+<h2>Let's play tictac toe </h2>
+
+
+<main>
+
+        <div ngClass="board" >
+            @for (item of board; track $index) {
+                <div ngClass="cell" >{{item}}</div>
+            }
+        </div>
+</main>

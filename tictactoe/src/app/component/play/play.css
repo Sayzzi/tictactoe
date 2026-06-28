@@ -1,0 +1,106 @@
+/* variable to update number of cells */
+:root {
+    --cells: 3;
+}
+
+
+
+main { 
+
+  display: flex; 
+
+  flex-direction: column; 
+
+  justify-content: center; 
+
+  align-items: center; 
+
+  width: 100vw; 
+
+} 
+
+ 
+ 
+
+.board { 
+
+  display: grid; 
+
+  grid-template-rows: repeat(3, 100px); 
+
+  grid-template-columns: repeat(3, 100px); 
+
+} 
+
+ 
+ 
+
+.cell { 
+
+  border: 1px solid black; 
+
+  transition: 400ms; 
+
+  display: flex; 
+
+ 
+ 
+
+  justify-content: center; 
+
+  align-items: center; 
+
+} 
+
+ 
+ 
+
+.cell:not(.cross):not(.circle) { 
+
+  cursor: pointer; 
+
+} 
+
+ 
+ 
+
+.cell:not(.cross):not(.circle):hover { 
+
+  background-color: limegreen; 
+
+} 
+
+ 
+ 
+
+.cell.cross, .cell.circle { 
+
+  cursor: not-allowed; 
+
+} 
+
+ 
+ 
+
+.cell.cross::before { 
+
+  content: "❌"; 
+
+  font-size: 70px; 
+
+} 
+
+ 
+ 
+
+.cell.circle::before { 
+
+  content: "⭕"; 
+
+  font-size: 70px; 
+
+}
+
+
+
+ 
