@@ -1,7 +1,7 @@
-<h2>Let's play tictac toe </h2>
+<h2>TicTacToe</h2>
 <main>
     @if (gameStarted()) {
-    <div class="board" [style.--cells]="size()">
+    <div class="board" [style.--cells]="size()" [class.thinking]="isComputerThinking()">
         @for (item of board(); track $index) {
         <div class="cell" [ngClass]="{ 'cross': item === 'X', 'circle': item === 'O' }" (click)="play($index)">
         </div>
@@ -12,13 +12,9 @@
     } @else if (isDraw()) {
     <p>Game is draw</p>
     }
-
     @if (winner() || isDraw()) {
     <button (click)="reset()">Play again</button>
     }
-
-
-
     } @else {
     <button (click)="chooseSymbol('X')">Play ❌</button>
     <button (click)="chooseSymbol('O')">Play ⭕</button>
